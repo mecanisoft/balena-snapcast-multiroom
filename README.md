@@ -1,3 +1,5 @@
+# Fork of snapcast-multiroom
+for use it together with belenaos
 # snapcast-multiroom
 Multiroom stack using Snapcast + MPD + Plexamp + UPnP + Shairport + Mopidy + Docker + something else
 

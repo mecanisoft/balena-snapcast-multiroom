@@ -1,11 +1,30 @@
-version: "3"
+version: "2"
+volumes:
+  mpd-data:
+  fifo:
+  mpd-default-data:
+  mpd-default-kitchen-data:
+  mpd-default-hall-data:
+  radio-data:
+  pifi-data:
+  mpdfm-data:
+  snapserver-data:
+  snapchanger-data:
+  snapcron-data:
+  shairportsync-main:
+  plexamp-data:
+  mopidy-data:
+  music-shares-data:
+  upmpdcli-data:
 services:
   mpd-radio:
     image: registry.local:5000/mpd
-    build: ./mpd
+    build: 
+      context: ./mpd
     volumes:
-      - fifo:/fifo/
-      - /data/swarm/multiroom/mpd/mpd-radio.conf:/etc/mpd.conf
+     - "fifo:/fifo/"
+#     - /data/swarm/multiroom/mpd/mpd-radio.conf:/etc/mpd.conf
+      - "mpd-data:/etc/mpd.conf"
     ports: 
       - 36602:6600
     networks:
@@ -15,10 +34,12 @@ services:
 
   mpd-default:
     image: registry.local:5000/mpd
-    build: ./mpd
+    build: 
+      context: ./mpd
     volumes:
-      - fifo:/fifo/
-      - /data/swarm/multiroom/mpd/mpd-default.conf:/etc/mpd.conf
+     - "fifo:/fifo/"
+#     - /data/swarm/multiroom/mpd/mpd-default.conf:/etc/mpd.conf
+      - "mpd-default-data:/etc/mpd.conf"
     ports: 
       - 6600:6600
     networks:
@@ -28,10 +49,12 @@ services:
 
   mpd-room:
     image: registry.local:5000/mpd
-    build: ./mpd
+    build: 
+      context: ./mpd
     volumes:
-      - fifo:/fifo/
-      - /data/swarm/multiroom/mpd/mpd-default-room.conf:/etc/mpd.conf
+      - "fifo:/fifo/"
+#      - /data/swarm/multiroom/mpd/mpd-default-room.conf:/etc/mpd.conf
+      - "mpd-data:/etc/mpd.conf"
     ports: 
       - 6602:6600
     networks:
@@ -41,10 +64,12 @@ services:
 
   mpd-zal:
     image: registry.local:5000/mpd
-    build: ./mpd
+    build: 
+      context: ./mpd
     volumes:
-      - fifo:/fifo/
-      - /data/swarm/multiroom/mpd/mpd-default-zal.conf:/etc/mpd.conf
+      - "fifo:/fifo/"
+#      - /data/swarm/multiroom/mpd/mpd-default-zal.conf:/etc/mpd.conf
+      - "mpd-data:/etc/mpd.conf"
     ports: 
       - 6601:6600
     networks:
@@ -54,10 +79,12 @@ services:
 
   mpd-kitchen:
     image: registry.local:5000/mpd
-    build: ./mpd
+    build: 
+      context: ./mpd
     volumes:
-      - fifo:/fifo/
-      - /data/swarm/multiroom/mpd/mpd-default-kitchen.conf:/etc/mpd.conf
+      - "fifo:/fifo/"
+#      - /data/swarm/multiroom/mpd/mpd-default-kitchen.conf:/etc/mpd.conf
+      - "mpd-default-kitchen-data:/etc/mpd.conf"
     ports: 
       - 6603:6600
     networks:
@@ -67,10 +94,12 @@ services:
 
   mpd-hall:
     image: registry.local:5000/mpd
-    build: ./mpd
+    build: 
+      context: ./mpd
     volumes:
-      - fifo:/fifo/
-      - /data/swarm/multiroom/mpd/mpd-default-hall.conf:/etc/mpd.conf
+      - "fifo:/fifo/"
+#      - /data/swarm/multiroom/mpd/mpd-default-hall.conf:/etc/mpd.conf
+      - "mpd-default-hall-data:/etc/mpd.conf"
     ports: 
       - 6604:6600
     networks:
@@ -81,11 +110,15 @@ services:
 
   radio:
     image: registry.local:5000/radio
-    build: ./radio
+    build: 
+      context: ./radio
     volumes:
-      - /data/swarm/multiroom/radio/radio_supervisor.py:/root/radio_supervisor.py
-      - /data/swarm/multiroom/radio/radio_supervisor2.py:/root/radio_supervisor2.py
-      - /data/swarm/multiroom/radio/radio_supervisor2.sh:/root/radio_supervisor2.sh
+#      - /data/swarm/multiroom/radio/radio_supervisor.py:/root/radio_supervisor.py
+#      - /data/swarm/multiroom/radio/radio_supervisor2.py:/root/radio_supervisor2.py
+#      - /data/swarm/multiroom/radio/radio_supervisor2.sh:/root/radio_supervisor2.sh
+      - "radio-data:/root/radio_supervisor.py"
+      - "radio-data:/root/radio_supervisor2.py"
+      - "radio-data:/root/radio_supervisor2.sh"
     networks:
       - snapcast
       - proxy-local
@@ -93,14 +126,17 @@ services:
 
   pifi:
     image: registry.local:5000/pifi
-    build: ./pifi.radio
+    build:
+      context: ./pifi.radio
     depends_on:
       - radio
     ports: 
       - 3000
     volumes:
-      - /data/swarm/multiroom/pifi.radio/streams.json:/etc/pifi/streams.json
-      - /data/swarm/multiroom/pifi.radio/config.json:/etc/pifi/config.json
+#      - /data/swarm/multiroom/pifi.radio/streams.json:/etc/pifi/streams.json
+#      - /data/swarm/multiroom/pifi.radio/config.json:/etc/pifi/config.json
+      - "pifi-data:/etc/pifi/streams.json"
+      - "pifi-data:/etc/pifi/config.json"
     networks:
       - snapcast
       - proxy-local
@@ -108,7 +144,8 @@ services:
 
   mpdfm:
     image: registry.local:5000/mpdfm
-    build: ./mpd.fm
+    build: 
+      context: ./mpd.fm
     depends_on:
       - radio
     environment:
@@ -119,7 +156,7 @@ services:
     ports: 
       - 4200
     volumes:
-      - /data/swarm/multiroom/mpd.fm/stations.json:/app/stations.json
+      - "mpdfm-data:/app/stations.json"
     networks:
       - snapcast
       - proxy-local
@@ -127,7 +164,8 @@ services:
    
   snapserver:
     image: registry.local:5000/snapserver
-    build: ./snapserver
+    build: 
+      context: ./snapserver
     network_mode: host
     ports:
       - "1704:1704"
@@ -137,21 +175,23 @@ services:
       - SERVICE_PORT=1704  # for Avahi container
       - SERVICE_TYPE=_snapcast._tcp  # for Avahi container
     volumes:
-        - /data/swarm/multiroom/snapserver/snapserver.conf:/etc/snapserver.conf
-        - fifo:/fifo/
+#        - /data/swarm/multiroom/snapserver/snapserver.conf:/etc/snapserver.conf
+        - "fifo:/fifo/"
+        - "snapserver-data:/etc/snapserver.conf"
 #    networks:
 #        - snapcast
     restart: unless-stopped
 
   snapcastr:
     image: registry.local:5000/snapcastr
-    build: ./snapcastr
+    build: 
+      context: ./snapcastr
     depends_on:
       - snapserver
     ports:
       - 5011:5011
     environment:
-      - SNAPCAST_HOST=192.168.2.6
+      - SNAPCAST_HOST=${SNAPCAST_HOST}
     networks:
       - snapcast
       - proxy-local
@@ -159,30 +199,37 @@ services:
 
   snapchanger:
     image: registry.local:5000/snapchanger
-    build: ./snapchanger
+    build: 
+      context: ./snapchanger
     depends_on:
       - snapserver
     environment:
-      - SNAPCAST_HOST=192.168.2.6
+      - SNAPCAST_HOST=${SNAPCAST_HOST}
     volumes:
-      - /data/swarm/multiroom/snapchanger/snapchanger.py:/root/snapchanger.py
-      - /data/swarm/multiroom/snapchanger/snapchanger.sh:/root/snapchanger.sh
+#      - /data/swarm/multiroom/snapchanger/snapchanger.py:/root/snapchanger.py
+#      - /data/swarm/multiroom/snapchanger/snapchanger.sh:/root/snapchanger.sh
+      - "snapchanger-data:/root/snapchanger.py"
+      - "snapchanger-data:/root/snapchanger.sh"
+
     networks:
         - snapcast
     restart: unless-stopped
 
   snapcron:
     image: registry.local:5000/snapcron
-    build: ./snapcron
+    build: 
+      context: ./snapcron
     depends_on:
       - snapserver
     environment:
-      - SNAPCAST_HOST=192.168.2.6
+      - SNAPCAST_HOST=${SNAPCAST_HOST}
     networks:
         - snapcast
     volumes:
-      - /data/swarm/multiroom/snapcron/crontab:/etc/crontabs/root
-      - /data/swarm/multiroom/snapcron/scripts:/scripts
+#      - /data/swarm/multiroom/snapcron/crontab:/etc/crontabs/root
+#      - /data/swarm/multiroom/snapcron/scripts:/scripts
+      - "snapcron-data:/etc/crontabs/root"
+      - "snapcron-data:/scripts"
     restart: unless-stopped
 
   shairportSync-main:
@@ -192,8 +239,9 @@ services:
     environment:
       - AIRPLAY_NAME=Multiroom
     volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - fifo:/fifo
+#      - /etc/localtime:/etc/localtime:ro
+      - "fifo:/fifo"
+      - "shairportsync-main:/etc/localtime:ro"
 #    networks:
 #        - snapcast
     command:
@@ -208,33 +256,41 @@ services:
   plexamp:
     network_mode: host
     image: registry.local:5000/plexamp
-    build: ./plexamp
+    build: 
+      context: ./plexamp
     ports:
         - "20000:20000"
 #        - "36600:36600"
     environment:
-      - TZ=Europe/Moscow
+      - TZ=Europe/Berlin
 #    networks:
 #        - snapcast
     volumes:
-        - /data/swarm/multiroom/plexamp/config:/root/.config/Plexamp
-        - fifo:/fifo/
-        - /data/swarm/multiroom/plexamp/mpd.conf:/etc/mpd.conf
+#        - /data/swarm/multiroom/plexamp/config:/root/.config/Plexamp
+        - "fifo:/fifo/"
+#        - /data/swarm/multiroom/plexamp/mpd.conf:/etc/mpd.conf
+        - "plexamp-data:/root/.config/Plexamp"
+        - "plexamp-data:/etc/mpd.conf"
+
     restart: unless-stopped
 
   mopidy:
     image: whhoesj/mopidy
 #    image: registry.local:5000/mopidy
-#    build: ./mopidy
+#    build: 
+#      context: ./mopidy
     ports:
         - "6680:6680"
         - "6681:6681"
         - "16600:6600"
     volumes:
-        - fifo:/fifo/
-        - /data/swarm/multiroom/mopidy/data:/var/lib/mopidy
-        - /shares/music:/media:ro
-        - /data/swarm/multiroom/mopidy/mopidy.conf:/etc/mopidy.conf
+        - "fifo:/fifo/"
+#       - /data/swarm/multiroom/mopidy/data:/var/lib/mopidy
+#       - /shares/music:/media:ro
+#       - /data/swarm/multiroom/mopidy/mopidy.conf:/etc/mopidy.conf
+        - "mopidy-data:/var/lib/mopidy"
+        - "music-shares-data:/media:ro"
+        - "mopidy-data:/etc/mopidy.conf"
     networks:
         - snapcast
         - proxy-local
@@ -242,21 +298,21 @@ services:
 
   upmpdcli:
     image: registry.local:5000/upmpdcli
-    build: ./upmpdcli
+    build: 
+      context: ./upmpdcli
     network_mode: host
     environment:
-      - TZ=Europe/Moscow
+      - TZ=Europe/Berlin
     volumes:
-      - /data/swarm/multiroom/upmpdcli/mpd.conf:/etc/mpd.conf
-      - fifo:/fifo/
+#      - /data/swarm/multiroom/upmpdcli/mpd.conf:/etc/mpd.conf
+      - "fifo:/fifo/"
+      - "upmpdcli-data:/etc/mpd.conf"
 #    networks:
 #        - snapcast
     restart: unless-stopped
 
 
 
-volumes:
-  fifo:
 
 networks:
   proxy-local:
