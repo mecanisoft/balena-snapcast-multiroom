@@ -251,7 +251,7 @@ services:
       context: ./upmpdcli
     network_mode: host
     environment:
-      - TZ=Europe/Berlin
+      - TZ=America/Guayaquil
     volumes:
       - fifo:/fifo/
       - upmpdcli-data:/etc/mpd.conf
