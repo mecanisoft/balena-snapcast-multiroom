@@ -4,8 +4,8 @@ ARG  snapcast_version=0.17.1
 ENV  STREAM_NAME Snapserver
 
 RUN  apt-get update \
-  && apt-get install -y wget  \
-  && rm -rf /var/lib/apt/lists/*
+  && apt-get install -y wget  
+  
 RUN  wget https://github.com/badaix/snapcast/releases/download/v${snapcast_version}/snapserver_${snapcast_version}-1_amd64.deb
 RUN  dpkg -i snapserver_${snapcast_version}-1_amd64.deb \
   ;  apt-get update \
